@@ -1,8 +1,11 @@
 import json
 
-from DiGraph import DiGraph
-from MyNode import MyNode
+from src.DiGraph import DiGraph
+from src.MyNode import MyNode
 from src.Pokemons import Pokemons
+from src.Agent import Agent
+from src.GraphAlgo import GraphAlgo
+from client_python.client import Client
 
 eps = 0.0000000001
 import math
@@ -11,8 +14,10 @@ import math
 class Game:
     def __init__(self):
         self.pokemons = []
-        self.agents = []
+        self.agents = {}
         self.graph = DiGraph()
+        self.alg = GraphAlgo(self.graph)
+        self.client = Client()
 
     def distance_two_nodes(self, pos1: tuple = None, pos2: tuple = None):
         return math.sqrt(pow(pos1[0] - pos2[0], 2) +
@@ -45,5 +50,59 @@ class Game:
                     return
 
     def update(self, agents=None, pokemons=None, graph=None):
+        if pokemons != None:
+            self.pokemons = []
+            pokemons_obj = json.loads(pokemons)
+            for poke in pokemons_obj['Pokemons']:
+                p = Pokemons(poke['Pokemon'])
+                self.pokemon_src_dest(p)
+                self.pokemons.append(p)
         if agents != None:
             agents_obj = json.loads(agents)
+            for a in agents_obj['Agents']:
+                id = int(a['Agent']['id'])
+                if not id is self.agents:
+                    self.agents[id] = Agent(a['Agent'])
+                else:
+                    self.agents[id].update(a['Agent'])
+
+        if graph != None:
+            self.graph = DiGraph()
+            graph_obj = json.loads(graph)
+            for node in graph_obj["Nodes"]:
+                id = int(node["id"])
+                if "pos" in node:
+                    posData = node["pos"].split(',')
+                    self.graph.add_node(
+                        id, (float(posData[0]), float(posData[1]), float(posData[2])))
+                else:
+                    self.graph.add_node(id)
+            for edge in graph_obj["Edges"]:
+                self.graph.add_edge(int(edge["src"]), int(
+                    edge["dest"]), float(edge["w"]))
+
+        # if pokemons != None:
+        #     self.pokemons = []
+        #     pokemons_obj = json.loads(pokemons)
+        #     for poke in pokemons_obj['Pokemons']:
+        #         p = Pokemons(poke['Pokemon'])
+        #         self.pokemon_src_dest(p)
+        #         self.pokemons.append(p)
+
+    def list_to_go(self):
+        dis = math.inf
+        res = []
+        for age in self.agents:
+
+            for pok in self.pokemons:
+                if self.alg.shortest_path(age.src , self.pok_to_edge(pok).src)[0] < dis:
+                    dis = self.alg.shortest_path(age.src , self.pok_to_edge(pok).src)[0]
+                    res = self.alg.shortest_path(age.src , self.pok_to_edge(pok).src)[1]
+
+        return res
+
+
+
+
+
+

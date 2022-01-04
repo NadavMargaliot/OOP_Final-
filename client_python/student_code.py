@@ -9,13 +9,12 @@ import json
 from pygame import gfxdraw
 import pygame
 from pygame import *
-from numpy import inf
-import math
-from src.GraphAlgoInterface import GraphAlgoInterface
+from src.Game import Game
 from src.GraphAlgo import GraphAlgo
-from src.DiGraph import DiGraph
+import math
+
 background = "/Users/adielbenmeir/Desktop/pics_Ex4/battle_field.jpeg"
-agent_ash = "/Users/adielbenmeir/Desktop/pics_Ex4/ash2.png"
+pokeball = "/Users/adielbenmeir/Desktop/pics_Ex4/pokeball2.png"
 bulbasaur = "/Users/adielbenmeir/Desktop/pics_Ex4/bulbasaur.png"
 
 
@@ -39,7 +38,6 @@ client.start_connection(HOST, PORT)
 pokemons = client.get_pokemons()
 pokemons_obj = json.loads(pokemons, object_hook=lambda d: SimpleNamespace(**d))
 
-print(pokemons)
 
 graph_json = client.get_graph()
 
@@ -82,7 +80,7 @@ def my_scale(data, x=False, y=False):
 
 radius = 15
 
-client.add_agent("{\"id\":0}")
+client.add_agent("{\"id\":9}")
 # client.add_agent("{\"id\":1}")
 # client.add_agent("{\"id\":2}")
 # client.add_agent("{\"id\":3}")
@@ -156,11 +154,9 @@ while client.is_running() == 'true':
 
     # draw agents
     for agent in agents:
-        agent_image = image.load(agent_ash)
-        agent_image = pygame.transform.scale(agent_image, (50, 50))
-        # pygame.draw.circle(screen, Color(122, 61, 23),
-        #                    (int(agent.pos.x), int(agent.pos.y)), 10)
-        screen.blit(agent_image, (int(agent.pos.x), int(agent.pos.y)))
+        pokeball_image = image.load(pokeball)
+        pokeball_image = pygame.transform.scale(pokeball_image, (50, 50))
+        screen.blit(pokeball_image, (int(agent.pos.x), int(agent.pos.y)))
     # draw pokemons (note: should differ (GUI wise) between the up and the down pokemons (currently they are marked in the same way).
     bulbasaur_image = image.load(bulbasaur)
     bulbasaur_image = pygame.transform.scale(bulbasaur_image, (50, 50))
@@ -175,14 +171,32 @@ while client.is_running() == 'true':
     # refresh rate
     clock.tick(60)
 
+    game = Game()
+    game.update(client.get_agents(),client.get_pokemons(),client.get_graph())
+    # lst = game.list_to_go()
+    alg = GraphAlgo(game.graph)
 
+    def list_to_go():
+        dis = math.inf
+        res = []
+        for age in agents:
 
+            for pok in pokemons:
+                if alg.shortest_path(age.src , game.pok_to_edge(pok).src)[0] < dis:
+                    dis = alg.shortest_path(age.src , game.pok_to_edge(pok).src)[0]
+                    res = alg.shortest_path(age.src , game.pok_to_edge(pok).src)[1]
 
+        return res
+
+    lst = list_to_go()
     # choose next edge
     for agent in agents:
         if agent.dest == -1:
-            print(agent)
-            next_node = (agent.src - 1) % len(graph.Nodes)
+
+
+            next_node = lst.pop()
+            # lst.pop()
+            # next_node = (agent.src - 1) % len(graph.Nodes)
             client.choose_next_edge(
                 '{"agent_id":'+str(agent.id)+', "next_node_id":'+str(next_node)+'}')
             ttl = client.time_to_end()

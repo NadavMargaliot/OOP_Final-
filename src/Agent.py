@@ -11,3 +11,6 @@ class Agent:
             self.pos.append(float(n))
 
         self.stations = []
+
+
+
