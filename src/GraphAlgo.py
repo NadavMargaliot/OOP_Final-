@@ -5,8 +5,8 @@ import sys
 from itertools import permutations
 from typing import List
 from numpy import inf
-from GraphAlgoInterface import GraphAlgoInterface
-from DiGraph import DiGraph
+from src.GraphAlgoInterface import GraphAlgoInterface
+from src.DiGraph import DiGraph
 from src.GraphInterface import GraphInterface
 import matplotlib.pyplot as plt
 

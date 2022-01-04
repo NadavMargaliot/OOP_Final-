@@ -9,7 +9,17 @@ import json
 from pygame import gfxdraw
 import pygame
 from pygame import *
+from numpy import inf
+import math
+from src.GraphAlgoInterface import GraphAlgoInterface
+from src.GraphAlgo import GraphAlgo
+from src.DiGraph import DiGraph
+background = "/Users/adielbenmeir/Desktop/pics_Ex4/battle_field.jpeg"
+agent_ash = "/Users/adielbenmeir/Desktop/pics_Ex4/ash2.png"
+bulbasaur = "/Users/adielbenmeir/Desktop/pics_Ex4/bulbasaur.png"
 
+
+background_img = image.load(background)
 # init pygame
 WIDTH, HEIGHT = 1080, 720
 
@@ -48,6 +58,9 @@ min_x = min(list(graph.Nodes), key=lambda n: n.pos.x).pos.x
 min_y = min(list(graph.Nodes), key=lambda n: n.pos.y).pos.y
 max_x = max(list(graph.Nodes), key=lambda n: n.pos.x).pos.x
 max_y = max(list(graph.Nodes), key=lambda n: n.pos.y).pos.y
+
+
+
 
 
 def scale(data, min_screen, max_screen, min_data, max_data):
@@ -104,7 +117,9 @@ while client.is_running() == 'true':
             exit(0)
 
     # refresh surface
-    screen.fill(Color(0, 0, 0))
+
+    background_image = transform.scale(background_img, (screen.get_width(), screen.get_height()))
+    screen.blit(background_image, [0, 0])
 
     # draw nodes
     for n in graph.Nodes:
@@ -138,28 +153,42 @@ while client.is_running() == 'true':
         pygame.draw.line(screen, Color(61, 72, 126),
                          (src_x, src_y), (dest_x, dest_y))
 
+
     # draw agents
     for agent in agents:
-        pygame.draw.circle(screen, Color(122, 61, 23),
-                           (int(agent.pos.x), int(agent.pos.y)), 10)
+        agent_image = image.load(agent_ash)
+        agent_image = pygame.transform.scale(agent_image, (50, 50))
+        # pygame.draw.circle(screen, Color(122, 61, 23),
+        #                    (int(agent.pos.x), int(agent.pos.y)), 10)
+        screen.blit(agent_image, (int(agent.pos.x), int(agent.pos.y)))
     # draw pokemons (note: should differ (GUI wise) between the up and the down pokemons (currently they are marked in the same way).
+    bulbasaur_image = image.load(bulbasaur)
+    bulbasaur_image = pygame.transform.scale(bulbasaur_image, (50, 50))
     for p in pokemons:
-        pygame.draw.circle(screen, Color(0, 255, 255), (int(p.pos.x), int(p.pos.y)), 10)
+        screen.blit(bulbasaur_image , (int(p.pos.x), int(p.pos.y)))
+
 
     # update screen changes
     display.update()
 
+
     # refresh rate
     clock.tick(60)
+
+
+
 
     # choose next edge
     for agent in agents:
         if agent.dest == -1:
+            print(agent)
             next_node = (agent.src - 1) % len(graph.Nodes)
             client.choose_next_edge(
                 '{"agent_id":'+str(agent.id)+', "next_node_id":'+str(next_node)+'}')
             ttl = client.time_to_end()
             print(ttl, client.get_info())
+
+
 
     client.move()
 # game over:

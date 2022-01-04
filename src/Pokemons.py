@@ -1,3 +1,4 @@
+from src.DiGraph import DiGraph
 class Pokemons:
     def __init__(self, data: dict) -> None:
         self.value = data['value']
@@ -9,3 +10,7 @@ class Pokemons:
             self.pos.append(float(n))
         self.src = None
         self.dest = None
+
+
+
+
