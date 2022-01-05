@@ -187,12 +187,13 @@ while client.is_running() == 'true':
     game.list_to_go()
     while client.is_running() == 'true':
         while game.shortest is not None:
+            if len(game.shortest) == 0:
+                break
             age = game.agents
-            print("idddddd" , age.values().id)
             next_node = game.shortest[0]
             game.shortest.pop(0)
             client.choose_next_edge(
-                '{"agent_id":' + str (age.id) + ', "next_node_id":' + str(next_node) + '}')
+                '{"agent_id":' + str (age[0].id) + ', "next_node_id":' + str(next_node) + '}')
             ttl = client.time_to_end()
             print(ttl, client.get_info())
         game.list_to_go()
