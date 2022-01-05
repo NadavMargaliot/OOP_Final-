@@ -55,7 +55,7 @@ class MyTestCase(unittest.TestCase):
         A5 = "/Users/adielbenmeir/PycharmProjects/Ex3_Directed_Graph_Algo/data/A5.json"
         T0 = "/Users/adielbenmeir/PycharmProjects/Ex3_Directed_Graph_Algo/data/T0.json"
         alg1.load_from_json(A1)
-        alg1.shortest_path(1, 2)
+        alg1.shortest_path(1, 9)
         graph = DiGraph()
         a = MyNode(1, None)
         b = MyNode(2, None)

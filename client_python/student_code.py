@@ -51,6 +51,7 @@ for n in graph.Nodes:
     x, y, _ = n.pos.split(',')
     n.pos = SimpleNamespace(x=float(x), y=float(y))
 
+
  # get data proportions
 min_x = min(list(graph.Nodes), key=lambda n: n.pos.x).pos.x
 min_y = min(list(graph.Nodes), key=lambda n: n.pos.y).pos.y
@@ -80,7 +81,7 @@ def my_scale(data, x=False, y=False):
 
 radius = 15
 
-client.add_agent("{\"id\":9}")
+client.add_agent("{\"id\":0}")
 # client.add_agent("{\"id\":1}")
 # client.add_agent("{\"id\":2}")
 # client.add_agent("{\"id\":3}")
@@ -168,40 +169,48 @@ while client.is_running() == 'true':
     display.update()
 
 
+# def list_to_go():
+#     dis = math.inf
+#     res = []
+#     for age in agents:
+#         for pok in pokemons:
+#             if alg.shortest_path(age.src, game.pok_to_edge(pok).src)[0] < dis:
+#                 dis = alg.shortest_path(age.src, game.pok_to_edge(pok).src)[0]
+#                 res = alg.shortest_path(age.src, game.pok_to_edge(pok).src)[1]
+#     return res
     # refresh rate
     clock.tick(60)
 
     game = Game()
     game.update(client.get_agents(),client.get_pokemons(),client.get_graph())
-    # lst = game.list_to_go()
     alg = GraphAlgo(game.graph)
-
-    def list_to_go():
-        dis = math.inf
-        res = []
-        for age in agents:
-
-            for pok in pokemons:
-                if alg.shortest_path(age.src , game.pok_to_edge(pok).src)[0] < dis:
-                    dis = alg.shortest_path(age.src , game.pok_to_edge(pok).src)[0]
-                    res = alg.shortest_path(age.src , game.pok_to_edge(pok).src)[1]
-
-        return res
-
-    lst = list_to_go()
-    # choose next edge
-    for agent in agents:
-        if agent.dest == -1:
-
-
-            next_node = lst.pop()
-            # lst.pop()
-            # next_node = (agent.src - 1) % len(graph.Nodes)
+    game.list_to_go()
+    while client.is_running() == 'true':
+        while game.shortest is not None:
+            age = game.agents
+            print("idddddd" , age.values().id)
+            next_node = game.shortest[0]
+            game.shortest.pop(0)
             client.choose_next_edge(
-                '{"agent_id":'+str(agent.id)+', "next_node_id":'+str(next_node)+'}')
+                '{"agent_id":' + str (age.id) + ', "next_node_id":' + str(next_node) + '}')
             ttl = client.time_to_end()
             print(ttl, client.get_info())
+        game.list_to_go()
 
+
+
+
+
+
+    # choose next edge
+    # for agent in agents:
+    #     if agent.dest == -1:
+    #         next_node = game.shortest[0]
+    #         game.shortest.pop(0)
+    #         client.choose_next_edge(
+    #             '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
+    #         ttl = client.time_to_end()
+    #         print(ttl, client.get_info())
 
 
     client.move()
