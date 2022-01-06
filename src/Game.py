@@ -1,5 +1,6 @@
 
 import json
+import time
 
 import pygame
 
@@ -200,18 +201,29 @@ class Game:
         final_list.sort(key=lambda x: x[1][1][0])
         agent_to_pokemon = final_list[0]
         # ( agent.id, (pokemon, (TT, (distance, [path]))))
-        agent_path = []
-        agent_path.append(final_list[0][1][1][1][1])
-        return agent_to_pokemon
+        final_path = agent_to_pokemon[1][1][1][1]
+        final_path.append(agent_to_pokemon[1][0].dest)
+        return agent_to_pokemon[0], final_path
 
     def calculate_dist(self, agent: Agent, pokemon: Pokemons):
         if agent.src == pokemon.src:
-            return (0,(0,[]))
+            return 0,(0,[pokemon.dest])
         distance = self.alg.shortest_path(agent.src,pokemon.src)
         # distance = self.shortest_path(agent.src, pokemon.src)
         travel_time = (distance[0] / agent.speed)
         return travel_time, distance
         # ( TT, (distance, [path]))
+
+    def CMD(self):
+        if self.agents.get(self.allocate_agents()[0]).dest == -1:
+            if len(self.allocate_agents()[1]) > 1:
+                client.choose_next_edge(
+                    '{"agent_id":%s, "next_node_id":%s}' % (self.allocate_agents()[0], self.allocate_agents()[1][1]))
+            else:
+                client.choose_next_edge(
+                    '{"agent_id":%s, "next_node_id":%s}' % (self.allocate_agents()[0], self.allocate_agents()[1][0]))
+
+
 
 
 
@@ -220,27 +232,40 @@ if __name__ == '__main__':
     client.start()
     game = Game()
     game.update(client.get_agents(),client.get_pokemons(),client.get_graph())
-    print(game.agents)
-    print(game.pokemons_list)
-    print(game.graph)
-    print(client.get_info())
-    print(game.alg.shortest_path(2,5))
+    game.pokemon_src_dest(game.pokemons_list[0])
 
     while client.is_running() == 'true':
-        for i in game.agents.values():
-            game.pokemon_src_dest(game.pokemons_list[0])
-            curr_list = game.allocate_agents()[1][1][1][1]
-            print(game.allocate_agents())
-            curr_list.remove(0)
-            clock.tick(60)
+        game.update(client.get_agents(),client.get_pokemons())
+        time.sleep(0.2)
+        game.CMD()
+        print(client.move())
+    print(client.get_info())
 
-            for x in curr_list:
-                if i.dest == -1:
-                    next_node = x
-                    client.choose_next_edge(
-                        '{"agent_id":' + str(i.id) + ', "next_node_id":' + str(next_node) + '}')
-                print(client.move())
-            print(client.get_info())
+
+        # for i in game.agents.values():
+        #     curr_list = game.allocate_agents()[1][1][1][1]
+        #     clock.tick(60)
+        #
+        #
+        #     if i.dest == -1 and curr_list != None:
+        #         if len(curr_list) > 1:
+        #             next_node = curr_list[1]
+        #             curr_list.remove(0)
+        #         else:
+        #             next_node = curr_list[0]
+        #         client.choose_next_edge(
+        #             '{"agent_id":' + str(i.id) + ', "next_node_id":' + str(next_node) + '}')
+        #         print(client.move())
+
+
+
+            # for x in curr_list:
+            #     if i.dest == -1:
+            #         next_node = x
+            #         client.choose_next_edge(
+            #             '{"agent_id":' + str(i.id) + ', "next_node_id":' + str(next_node) + '}')
+            #     print(client.move())
+            # print(client.get_info())
 
 
 

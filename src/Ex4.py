@@ -15,9 +15,14 @@ client.start_connection(HOST,PORT)
 
 game = Game()
 
+client.add_agent("{\"id\":0}")
+
 game.update(client.get_pokemons(),client.get_agents(),client.get_graph())
 gui = GUI(game,client)
+client.start()
 while client.is_running() == 'true':
     game.update(client.get_pokemons(), client.get_agents())
-    print(game.graph)
+    game.CMD()
+    gui.draw()
+
 
