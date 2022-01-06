@@ -77,8 +77,6 @@ def my_scale(data, x=False, y=False):
         return scale(data, 50, screen.get_width() - 50, min_x, max_x)
     if y:
         return scale(data, 50, screen.get_height()-50, min_y, max_y)
-
-
 radius = 15
 
 client.add_agent("{\"id\":0}")
@@ -93,6 +91,9 @@ client.start()
 The code below should be improved significantly:
 The GUI and the "algo" are mixed - refactoring using MVC design pattern is required.
 """
+
+game = Game()
+game.update(client.get_agents(), client.get_pokemons(), client.get_graph())
 
 while client.is_running() == 'true':
     pokemons = json.loads(client.get_pokemons(),
@@ -167,52 +168,16 @@ while client.is_running() == 'true':
 
     # update screen changes
     display.update()
-
-
-# def list_to_go():
-#     dis = math.inf
-#     res = []
-#     for age in agents:
-#         for pok in pokemons:
-#             if alg.shortest_path(age.src, game.pok_to_edge(pok).src)[0] < dis:
-#                 dis = alg.shortest_path(age.src, game.pok_to_edge(pok).src)[0]
-#                 res = alg.shortest_path(age.src, game.pok_to_edge(pok).src)[1]
-#     return res
-    # refresh rate
     clock.tick(60)
 
-    game = Game()
-    game.update(client.get_agents(),client.get_pokemons(),client.get_graph())
-    alg = GraphAlgo(game.graph)
-    game.list_to_go()
-    while client.is_running() == 'true':
-        while game.shortest is not None:
-            if len(game.shortest) == 0:
-                break
-            age = game.agents
-            next_node = game.shortest[0]
-            game.shortest.pop(0)
+    # choose next edge
+    for agent in agents:
+        if agent.dest == -1:
+            next_node = (agent.src - 1) % len(graph.Nodes)
             client.choose_next_edge(
-                '{"agent_id":' + str (age[0].id) + ', "next_node_id":' + str(next_node) + '}')
+                '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
             ttl = client.time_to_end()
             print(ttl, client.get_info())
-        game.list_to_go()
-
-
-
-
-
-
-    # choose next edge
-    # for agent in agents:
-    #     if agent.dest == -1:
-    #         next_node = game.shortest[0]
-    #         game.shortest.pop(0)
-    #         client.choose_next_edge(
-    #             '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
-    #         ttl = client.time_to_end()
-    #         print(ttl, client.get_info())
-
 
     client.move()
 # game over:

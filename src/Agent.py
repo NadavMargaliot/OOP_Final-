@@ -5,12 +5,9 @@ class Agent:
         self.src = int(data['src'])
         self.dest = int(data['dest'])
         self.speed = float(data['speed'])
-        xyz = str(data['pos']).split(',')
-        self.pos = []
-        for n in xyz:
-            self.pos.append(float(n))
-
-        self.stations = []
+        location = str(data['pos']).split(',')
+        self.pos = [float(location[0]),float(location[1]),float(location[2])]
+        self.path = []
 
 
 

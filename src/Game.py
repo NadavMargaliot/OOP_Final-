@@ -1,6 +1,6 @@
 import heapq
 import json
-from types import SimpleNamespace
+
 
 from src.DiGraph import DiGraph
 from src.MyNode import MyNode
@@ -15,23 +15,19 @@ import math
 
 class Game:
     def __init__(self):
-        self.pokemons = []
+        self.pokemons_list = []
         self.agents = {}
         self.graph = DiGraph()
         self.alg = GraphAlgo(self.graph)
         self.client = Client()
         self.shortest = []
 
-    def distance_two_nodes(self, pos1: tuple = None, pos2: tuple = None):
-        return math.sqrt(pow(pos1[0] - pos2[0], 2) +
-                         pow(pos1[1] - pos2[1], 2))
-
-    def distanceNodes(self, node1: MyNode, node2: MyNode):
+    def dist_node_to_node(self, node1: MyNode, node2: MyNode):
         dis = math.sqrt(pow(node1.location[0] - node2.location[0],
                             2) + pow(node1.location[1] - node2.location[1], 2))
         return dis
 
-    def distancePokNode(self, node1: MyNode, pok: Pokemons):
+    def dist_pok_to_node(self, node1: MyNode, pok: Pokemons):
         dis = math.sqrt(
             pow(node1.location[0] - pok.pos[0], 2) + pow(node1.location[1] - pok.pos[1], 2))
         return dis
@@ -39,10 +35,10 @@ class Game:
     def pokemon_src_dest(self, pok: Pokemons) -> None:
         for node1 in self.graph.nodes:
             for node2 in self.graph.nodes:
-                dis1 = self.distanceNodes(
+                dis1 = self.dist_node_to_node(
                     self.graph.nodes[node1], self.graph.nodes[node2])
-                dis2 = (self.distancePokNode(
-                    self.graph.nodes[node1], pok) + self.distancePokNode(self.graph.nodes[node2], pok))
+                dis2 = (self.dist_pok_to_node(
+                    self.graph.nodes[node1], pok) + self.dist_pok_to_node(self.graph.nodes[node2], pok))
                 if abs(dis1 - dis2) <= eps:
                     if pok.type == -1:
                         pok.src = min(node1, node2)
@@ -51,6 +47,20 @@ class Game:
                         pok.src = max(node1, node2)
                         pok.dest = min(node1, node2)
                     return
+
+    def update_pokemons_agents(self, pokemons=None, agents=None):
+        if agents != None:
+            agents_obj = json.loads(agents)
+            for a in agents_obj['Agents']:
+                id = int(a['Agent']['id'])
+                self.agents[id] = Agent(a['Agent'])
+        if pokemons != None:
+            self.pokemons_list = []
+            pokemons_obj = json.loads(pokemons)
+            for p in pokemons_obj['Pokemons']:
+                pok = Pokemons(p['Pokemon'])
+                self.pokemon_src_dest(pok)
+                self.pokemons_list.append(pok)
 
     def update(self, agents=None, pokemons=None, graph=None):
         if agents != None:
@@ -63,12 +73,12 @@ class Game:
                     self.agents[id].update(a['Agent'])
 
         if pokemons != None:
-            self.pokemons = []
+            self.pokemons_list = []
             pokemons_obj = json.loads(pokemons)
             for poke in pokemons_obj['Pokemons']:
                 p = Pokemons(poke['Pokemon'])
                 self.pokemon_src_dest(p)
-                self.pokemons.append(p)
+                self.pokemons_list.append(p)
 
         if graph != None:
             self.graph = DiGraph()
@@ -85,13 +95,13 @@ class Game:
                 self.graph.add_edge(int(edge["src"]), int(
                     edge["dest"]), float(edge["w"]))
 
-    def find_node(self, pos:tuple = None):
+    def find_node(self, pos: tuple = None):
         node_list = self.graph.nodes.values()
         for n in node_list:
             if n.location[0] == pos[0] and n.location[1] == pos[1]:
                 return n
 
-    def find_node_by_edge(self, pok:Pokemons):
+    def find_node_by_edge(self, pok: Pokemons):
         self.pokemon_src_dest(pok)
         node_list = self.graph.nodes.values()
         for n in node_list:
@@ -144,17 +154,18 @@ class Game:
         res = []
         for age in self.agents.values():
             a_node = self.find_node(age.pos)
-            for pok in self.pokemons:
+            for pok in self.pokemons_list:
                 self.pokemon_src_dest(pok)
                 p_node = self.find_node_by_edge(pok)
-                if self.shortest_path(a_node.id , p_node.id)[0] < dis:
-                    dis = self.shortest_path(a_node.id , p_node.id)[0]
-                    res = self.shortest_path(a_node.id , p_node.id)[1]
+                if self.shortest_path(a_node.id, p_node.id)[0] < dis:
+                    dis = self.shortest_path(a_node.id, p_node.id)[0]
+                    res = self.shortest_path(a_node.id, p_node.id)[1]
 
         self.shortest = res
 
+    def next_edge(self, client: Client):
+        for agent in self.agents.values():
 
-
-
-
-
+            if agent.dest == -1:
+                client.choose_next_edge(
+                    '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(self.pokemons_list[0]) + '}')
