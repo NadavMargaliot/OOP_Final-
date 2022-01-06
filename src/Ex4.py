@@ -18,5 +18,6 @@ game = Game()
 game.update(client.get_pokemons(),client.get_agents(),client.get_graph())
 gui = GUI(game,client)
 while client.is_running() == 'true':
-    # game.update(client.get_pokemons(), client.get_agents())
-    gui.draw()
+    game.update(client.get_pokemons(), client.get_agents())
+    print(game.graph)
+

@@ -9,9 +9,8 @@ import json
 from pygame import gfxdraw
 import pygame
 from pygame import *
-from src.Game import Game
-from src.GraphAlgo import GraphAlgo
-import math
+
+
 
 background = "/Users/adielbenmeir/Desktop/pics_Ex4/battle_field.jpeg"
 pokeball = "/Users/adielbenmeir/Desktop/pics_Ex4/pokeball2.png"
@@ -92,8 +91,6 @@ The code below should be improved significantly:
 The GUI and the "algo" are mixed - refactoring using MVC design pattern is required.
 """
 
-game = Game()
-game.update(client.get_agents(), client.get_pokemons(), client.get_graph())
 
 while client.is_running() == 'true':
     pokemons = json.loads(client.get_pokemons(),
@@ -180,4 +177,5 @@ while client.is_running() == 'true':
             print(ttl, client.get_info())
 
     client.move()
+
 # game over:
