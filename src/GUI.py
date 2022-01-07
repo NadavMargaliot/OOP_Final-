@@ -58,8 +58,10 @@ class GUI:
 
     def drawEdges(self):
         graph = self.game.graph
-        for node in graph.get_all_v().values():
-            for e in graph.get_node(graph.all_out_edges_of_node(node.id)):
+        for node in graph.nodes.values():
+            print(node)
+            print(graph.nodes.get(node))
+            for e in graph.nodes.get(node):
                 src = graph.nodes[e[0]]
                 dest = graph.nodes[e[1]]
                 src_x = self.my_scale(src.location[0], x=True) + radius / 2
