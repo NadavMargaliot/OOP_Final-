@@ -15,10 +15,10 @@ game = Game()
 game.client.start_connection(HOST,PORT)
 game.addAgents()
 game.update(game.client.get_agents(),game.client.get_pokemons(),game.client.get_graph())
-game.pokemon_src_dest(game.pokemons_list[0])
-x = game.pokemons_list[0].dest
-print(x)
-y = str(x)
+# game.pokemon_src_dest(game.pokemons_list[0])
+# x = game.pokemons_list[0].dest
+# print(x)
+# y = str(x)
 gui = GUI(game,game.client)
 game.client.start()
 
@@ -27,9 +27,10 @@ game.client.start()
 
 while game.client.is_running() == 'true':
     game.update(game.client.get_agents(),game.client.get_pokemons())
-    time.sleep(0.1)
+    time.sleep(0.2)
     game.CMD()
     gui.draw()
+    # game.client.move()
     print(game.client.move())
     print(game.client.get_info())
 

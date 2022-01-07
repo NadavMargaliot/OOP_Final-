@@ -103,47 +103,6 @@ class Game:
             if n.id == pok.src:
                 return n
 
-    # def shortest_path(self, id1: int, id2: int) -> (float, list):
-    #     """
-    #     Returns the shortest path from node id1 to node id2 using Dijkstra's Algorithm
-    #     @param id1: The start node id
-    #     @param id2: The end node id
-    #     @return: The distance of the path, a list of the nodes ids that the path goes through"""
-    #     """initialize all weights of nodes to infinity"""
-    #     dist_weight = {node: math.inf for node in self.graph.nodes.keys()}
-    #     """keeping track on the shortest path to the nodes"""
-    #     previous_nodes = {id1: -1}
-    #     dist_weight[id1] = 0
-    #     queue = []
-    #     heapq.heappush(queue, (0, id1))
-    #     while queue:
-    #         current_node = heapq.heappop(queue)[1]
-    #         if dist_weight[current_node] == math.inf:
-    #             break
-    #         """iterating on the neighbors of the current node as pairs (neighbor = id , weight = weight)"""
-    #         for neighbour, weight in self.graph.nodes.get(current_node).neighbors_out.items():
-    #             alternative_route = dist_weight[current_node] + weight
-    #             if alternative_route < dist_weight[neighbour]:
-    #                 dist_weight[neighbour] = alternative_route
-    #                 previous_nodes[neighbour] = current_node
-    #                 """adding to the queue the distance to the neighbor and the neighbor as a pair
-    #                 the queue is a priority queue so when it will pop an node, it will pop the node
-    #                  with the smallest dist_weight"""
-    #                 heapq.heappush(queue, (dist_weight[neighbour], neighbour))
-    #             if current_node == id2:
-    #                 break
-    #     path = []
-    #     current_node = id2
-    #     if dist_weight[id2] == math.inf:
-    #         """there isn't a path from id1 to id2"""
-    #         return math.inf, []
-    #     while current_node != -1:
-    #         path.insert(0, current_node)
-    #         """shortest path"""
-    #         current_node = previous_nodes[current_node]
-    #
-    #     return dist_weight[id2], path
-
     def list_to_go(self):
         dis = math.inf
         res = []
@@ -158,9 +117,6 @@ class Game:
 
         self.shortest = res
 
-
-
-
     def dist_time_pok_agent(self, a: Agent, p: Pokemons):
         if a.src == p.src:
             return (0,(0,[]))
@@ -169,22 +125,27 @@ class Game:
         return (time, sp)
 
     def allocate_agents(self):
+        pok = []
         final_list = []
         for i in self.agents.values():
             temp = []
             for p in self.pokemons_list:
-                distance = self.time_and_shortest(i, p)
-                temp.append((p, distance))
+                if p not in pok:
+                    distance = self.time_and_shortest(i, p)
+                    temp.append((p, distance))
                 # (pokemon, (TT, (distance, [path])))
             temp.sort(key=lambda x: x[1][0])
+            pok.append(temp)
             final_list.append((i.id, temp[0]))
-            # ( agent.id, (pokemon, (TT, (distance, [path]))))
+            # ( agent.id, (pokemon, (TT, (distance, [path]))))     # ( agent.id, (pokemon, (TT, (distance, [path]))))
         final_list.sort(key=lambda x: x[1][1][0])
-        agent_to_pokemon = final_list[0]
-        # ( agent.id, (pokemon, (TT, (distance, [path]))))
-        final_path = agent_to_pokemon[1][1][1][1]
-        final_path.append(agent_to_pokemon[1][0].dest)
-        return agent_to_pokemon[0], final_path
+        final_path = {}
+        for i in self.agents.keys():
+            for element in final_list:
+                if (i == element[0]):
+                    final_path[i] = element[1][1][1][1]
+        return final_path
+
 
     def time_and_shortest(self, agent: Agent, pokemon: Pokemons):
         if agent.src == pokemon.src:
@@ -194,18 +155,20 @@ class Game:
         return travel_time, distance
         # ( TT, (distance, [path]))
 
-    # def allocate_all_agents(self):
-    #     for agent in self.agents:
-    #         self.allocate_agents()
-
     def CMD(self):
-        if self.agents.get(self.allocate_agents()[0]).dest == -1:
-            if len(self.allocate_agents()[1]) > 1:
-                self.client.choose_next_edge(
-                    '{"agent_id":%s, "next_node_id":%s}' % (self.allocate_agents()[0], self.allocate_agents()[1][1]))
-            else:
-                self.client.choose_next_edge(
-                    '{"agent_id":%s, "next_node_id":%s}' % (self.allocate_agents()[0], self.allocate_agents()[1][0]))
+        id_path = self.allocate_agents()
+        for i in self.agents.keys():
+            if self.agents.get(i).dest == -1:
+                if len(id_path[i]) > 1:
+                    self.client.choose_next_edge(
+                        '{"agent_id":%s, "next_node_id":%s}' % (i, id_path[i][1]))
+                else:
+                    self.client.choose_next_edge(
+                        '{"agent_id":%s, "next_node_id":%s}' % (
+                            i, id_path[i][0]))
+
+
+
 
     def addAgents(self):
         size = int(json.loads(self.client.get_info())["GameServer"]["agents"])

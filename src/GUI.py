@@ -6,7 +6,7 @@ from Game import *
 
 WIDTH, HEIGHT = 1080, 720
 radius = 15
-background = "/Users/adielbenmeir/Desktop/pics_Ex4/battle_field.jpeg"
+background = "/Users/adielbenmeir/Desktop/pics_Ex4/bt_3.jpeg"
 pokeball = "/Users/adielbenmeir/Desktop/pics_Ex4/pokeball2.png"
 bulbasaur = "/Users/adielbenmeir/Desktop/pics_Ex4/bulbasaur.png"
 voltorb = "/Users/adielbenmeir/Desktop/pics_Ex4/voltorb.webp"
