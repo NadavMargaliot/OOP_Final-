@@ -27,7 +27,7 @@ game.client.start()
 
 while game.client.is_running() == 'true':
     game.update(game.client.get_agents(),game.client.get_pokemons())
-    time.sleep(0.2)
+    time.sleep(0.1)
     game.CMD()
     gui.draw()
     print(game.client.move())
