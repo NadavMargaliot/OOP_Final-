@@ -1,7 +1,6 @@
 import pygame
 from pygame import *
 
-
 from client import Client
 from Game import *
 
@@ -29,9 +28,9 @@ class GUI:
         self.game = game
         self.screen = display.set_mode((WIDTH, HEIGHT), depth=32, flags=RESIZABLE)
         self.min_x = float('inf')
-        self.max_x = float('inf')
+        self.max_x = float('-inf')
         self.min_y = float('inf')
-        self.max_y = float('inf')
+        self.max_y = float('-inf')
         for node in self.game.graph.nodes.values():
             x = node.location[0]
             y = node.location[1]
@@ -39,6 +38,7 @@ class GUI:
             self.min_y = min(self.min_y, y)
             self.max_x = max(self.max_x, x)
             self.max_y = max(self.max_y, y)
+
 
     def scale(self, data, min_screen, max_screen, min_data, max_data):
         return ((data - min_data) / (max_data - min_data)) * (max_screen - min_screen) + min_screen
@@ -58,16 +58,13 @@ class GUI:
 
     def drawEdges(self):
         graph = self.game.graph
-        for node in graph.nodes.values():
-            print(node)
-            print(graph.nodes.get(node))
-            for e in graph.nodes.get(node):
-                src = graph.nodes[e[0]]
-                dest = graph.nodes[e[1]]
+        for n in graph.nodes.values():
+            for e in graph.all_out_edges_of_node(n.id):
+                src = n
                 src_x = self.my_scale(src.location[0], x=True) + radius / 2
                 src_y = self.my_scale(src.location[1], y=True) + radius / 2
-                dest_x = self.my_scale(dest.location[0], x=True) + radius / 2
-                dest_y = self.my_scale(dest.location[1], y=True) + radius / 2
+                dest_x = self.my_scale(graph.get_node(e).location[0], x=True) + radius / 2
+                dest_y = self.my_scale(graph.get_node(e).location[1], y=True) + radius / 2
                 pygame.draw.line(self.screen, Color(61, 72, 126), (src_x, src_y), (dest_x, dest_y), 5)
 
     def drawPokemons(self):
@@ -93,7 +90,7 @@ class GUI:
                 pygame.quit()
                 exit(0)
                 return False
-        # self.drawEdges()
+        self.drawEdges()
         self.drawNode()
         self.drawPokemons()
         self.drawAgents()
