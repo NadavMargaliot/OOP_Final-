@@ -173,7 +173,7 @@ class Game:
         for i in self.agents.values():
             temp = []
             for p in self.pokemons_list:
-                distance = self.calculate_dist(i, p)
+                distance = self.time_and_shortest(i, p)
                 temp.append((p, distance))
                 # (pokemon, (TT, (distance, [path])))
             temp.sort(key=lambda x: x[1][0])
@@ -186,13 +186,17 @@ class Game:
         final_path.append(agent_to_pokemon[1][0].dest)
         return agent_to_pokemon[0], final_path
 
-    def calculate_dist(self, agent: Agent, pokemon: Pokemons):
+    def time_and_shortest(self, agent: Agent, pokemon: Pokemons):
         if agent.src == pokemon.src:
             return 0,(0,[pokemon.dest])
         distance = self.alg.shortest_path(agent.src,pokemon.src)
         travel_time = (distance[0] / agent.speed)
         return travel_time, distance
         # ( TT, (distance, [path]))
+
+    # def allocate_all_agents(self):
+    #     for agent in self.agents:
+    #         self.allocate_agents()
 
     def CMD(self):
         if self.agents.get(self.allocate_agents()[0]).dest == -1:
@@ -203,7 +207,10 @@ class Game:
                 self.client.choose_next_edge(
                     '{"agent_id":%s, "next_node_id":%s}' % (self.allocate_agents()[0], self.allocate_agents()[1][0]))
 
-
+    def addAgents(self):
+        size = int(json.loads(self.client.get_info())["GameServer"]["agents"])
+        for i in range(size):
+            self.client.add_agent("{\"id\":" + str(i) + "}")
 
 
 

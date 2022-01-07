@@ -13,7 +13,7 @@ clock = pygame.time.Clock()
 # client = Client()
 game = Game()
 game.client.start_connection(HOST,PORT)
-game.client.add_agent("{\"id\":9}")
+game.addAgents()
 game.update(game.client.get_agents(),game.client.get_pokemons(),game.client.get_graph())
 game.pokemon_src_dest(game.pokemons_list[0])
 x = game.pokemons_list[0].dest
@@ -33,3 +33,8 @@ while game.client.is_running() == 'true':
     print(game.client.move())
     print(game.client.get_info())
 
+
+
+# work - cases
+# 0 - work - 79
+# 1 -
