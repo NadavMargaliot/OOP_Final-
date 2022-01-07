@@ -1,15 +1,15 @@
 
-import json
 import time
 
 import pygame
 
-from src.DiGraph import DiGraph
+from client import Client
+
+
 from src.MyNode import MyNode
 from src.Pokemons import Pokemons
 from src.Agent import Agent
-from src.GraphAlgo import GraphAlgo
-from client_python.client import Client
+from src.GraphAlgo import *
 eps = 0.0000000001
 import math
 
@@ -19,8 +19,8 @@ PORT = 6666
 HOST = '127.0.0.1'
 
 clock = pygame.time.Clock()
-client = Client()
-client.start_connection(HOST,PORT)
+# client = Client()
+# client.start_connection(HOST,PORT)
 
 class Game:
     def __init__(self):
@@ -173,11 +173,7 @@ class Game:
 
         self.shortest = res
 
-    def next_edge(self, client: Client):
-        for agent in self.agents.values():
-            if agent.dest == -1:
-                client.choose_next_edge(
-                    '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(self.pokemons_list[0]) + '}')
+
 
 
     def dist_time_pok_agent(self, a: Agent, p: Pokemons):
@@ -209,7 +205,6 @@ class Game:
         if agent.src == pokemon.src:
             return 0,(0,[pokemon.dest])
         distance = self.alg.shortest_path(agent.src,pokemon.src)
-        # distance = self.shortest_path(agent.src, pokemon.src)
         travel_time = (distance[0] / agent.speed)
         return travel_time, distance
         # ( TT, (distance, [path]))
@@ -217,70 +212,32 @@ class Game:
     def CMD(self):
         if self.agents.get(self.allocate_agents()[0]).dest == -1:
             if len(self.allocate_agents()[1]) > 1:
-                client.choose_next_edge(
+                self.client.choose_next_edge(
                     '{"agent_id":%s, "next_node_id":%s}' % (self.allocate_agents()[0], self.allocate_agents()[1][1]))
             else:
-                client.choose_next_edge(
+                self.client.choose_next_edge(
                     '{"agent_id":%s, "next_node_id":%s}' % (self.allocate_agents()[0], self.allocate_agents()[1][0]))
 
 
 
 
-
 if __name__ == '__main__':
-    client.add_agent("{\"id\":0}")
-    client.start()
     game = Game()
-    game.update(client.get_agents(),client.get_pokemons(),client.get_graph())
+    game.client.start_connection(HOST, PORT)
+    print(game.agents)
+    game.client.add_agent("{\"id\":0}")
+    game.client.start()
+
+    game.update(game.client.get_agents(),game.client.get_pokemons(),game.client.get_graph())
     game.pokemon_src_dest(game.pokemons_list[0])
 
-    while client.is_running() == 'true':
-        game.update(client.get_agents(),client.get_pokemons())
+    while game.client.is_running() == 'true':
+        game.update(game.client.get_agents(),game.client.get_pokemons())
         time.sleep(0.2)
         game.CMD()
-        print(client.move())
-    print(client.get_info())
+        print(game.client.move())
+    print(game.client.get_info())
 
-
-        # for i in game.agents.values():
-        #     curr_list = game.allocate_agents()[1][1][1][1]
-        #     clock.tick(60)
-        #
-        #
-        #     if i.dest == -1 and curr_list != None:
-        #         if len(curr_list) > 1:
-        #             next_node = curr_list[1]
-        #             curr_list.remove(0)
-        #         else:
-        #             next_node = curr_list[0]
-        #         client.choose_next_edge(
-        #             '{"agent_id":' + str(i.id) + ', "next_node_id":' + str(next_node) + '}')
-        #         print(client.move())
-
-
-
-            # for x in curr_list:
-            #     if i.dest == -1:
-            #         next_node = x
-            #         client.choose_next_edge(
-            #             '{"agent_id":' + str(i.id) + ', "next_node_id":' + str(next_node) + '}')
-            #     print(client.move())
-            # print(client.get_info())
-
-
-
-        # if i.dest == -1:
-        #     client.choose_next_edge(
-        #         '{"agent_id":' + str(i.id) + ', "next_node_id":' + str(0) + '}')
-        # client.move()
-        # print(i.src)
-        # print(client.get_info())
-        # if i.dest == -1:
-        #     client.choose_next_edge(
-        #         '{"agent_id":' + str(i.id) + ', "next_node_id":' + str(10) + '}')
-        # client.move()
-        # print(i.src)
-        # print(client.get_info())
 
 
 

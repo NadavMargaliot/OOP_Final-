@@ -4,18 +4,19 @@ OOP - Ex4
 Very simple GUI example for python client to communicates with the server and "play the game!"
 """
 from types import SimpleNamespace
-from client import Client
+# from client import Client
 import json
 from pygame import gfxdraw
 import pygame
 from pygame import *
 
 
+from src.client import Client
 
 background = "/Users/adielbenmeir/Desktop/pics_Ex4/battle_field.jpeg"
 pokeball = "/Users/adielbenmeir/Desktop/pics_Ex4/pokeball2.png"
 bulbasaur = "/Users/adielbenmeir/Desktop/pics_Ex4/bulbasaur.png"
-
+voltorb = "/Users/adielbenmeir/Desktop/pics_Ex4/voltorb.webp"
 
 background_img = image.load(background)
 # init pygame
@@ -122,17 +123,10 @@ while client.is_running() == 'true':
     for n in graph.Nodes:
         x = my_scale(n.pos.x, x=True)
         y = my_scale(n.pos.y, y=True)
+        voltorb_image = image.load(voltorb)
+        voltorb_image = pygame.transform.scale(voltorb_image, (50, 50))
+        screen.blit(voltorb_image, (x, y))
 
-        # its just to get a nice antialiased circle
-        gfxdraw.filled_circle(screen, int(x), int(y),
-                              radius, Color(64, 80, 174))
-        gfxdraw.aacircle(screen, int(x), int(y),
-                         radius, Color(255, 255, 255))
-
-        # draw the node id
-        id_srf = FONT.render(str(n.id), True, Color(255, 255, 255))
-        rect = id_srf.get_rect(center=(x, y))
-        screen.blit(id_srf, rect)
 
     # draw edges
     for e in graph.Edges:
