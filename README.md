@@ -20,6 +20,33 @@ The implementetion of the game is made out of two parts:
 
 You can find all the information about the classes and algorithms of the directed weighted graph in here https://github.com/adiel1892/Ex3_Directed_Graph_Algo
 
+## Classes 
+### game
+In this class we allocate the agent to the pokemon and basiclly controling the game.
+* dist_node_to_node - find distance between two nodes.
+* dist_pok_to_node - find distance between pokemon to node.
+* find_src_dest_pok - find src and dest for the pokemon by given a position.
+* update_pokemons_agents - updating the pokemons and the agents from the server.
+* update - initializing the game by the information from the server.
+* find_node - find node by given a position.
+* find_node_by_edge - find node by given a position on the edge.
+* allocate_agents - allocate a agent to a pokemon.
+* time_and_shortest - calculate the travel time of the agent , and returns the shortest path.
+* CMD - sends the agent to the pokemon.
+* addAgents - add the right number of agents to each case.
+
+### GUI
+In this class we creating the gui for the game.
+* scale
+* drawNode
+* drawEdges
+* drawPokemons
+* drawAgents
+* draw - draw everything.
+
+### Ex4
+In this class we are running the project by connecting the server to the port, game and gui. 
+
 ## our algorithms for catching pokemons
 We used a greedy algorithm which searching the "best" agent and the "best pokemon pair.
 A best pair is a pair that the travel time between each other is the fastest.
