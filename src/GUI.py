@@ -92,8 +92,6 @@ class GUI:
         color = (255, 255, 0)
         color_dark = (100, 100, 100)
         text = smallfont.render('STOP' , True , color)
-
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -102,6 +100,7 @@ class GUI:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if 0 <= pygame.mouse.get_pos()[0] <= 68 and 0 <= pygame.mouse.get_pos()[1] <= 25:
                     pygame.quit()
+                    exit(0)
         pygame.draw.rect(self.screen, color_dark, [0, 0, 68, 25])
         self.screen.blit(text, (0, 0))
         self.drawEdges()
