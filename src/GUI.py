@@ -10,6 +10,7 @@ background = "/Users/adielbenmeir/Desktop/pics_Ex4/bt_3.jpeg"
 pokeball = "/Users/adielbenmeir/Desktop/pics_Ex4/pokeball2.png"
 bulbasaur = "/Users/adielbenmeir/Desktop/pics_Ex4/bulbasaur.png"
 voltorb = "/Users/adielbenmeir/Desktop/pics_Ex4/voltorb.webp"
+
 pygame.init()
 pygame.font.init()
 FONT = pygame.font.SysFont('Arial', 20, bold=True)
@@ -20,6 +21,8 @@ bulbasaur_image = pygame.transform.scale(bulbasaur_image, (50, 50))
 background_img = image.load(background)
 voltorb_image = image.load(voltorb)
 voltorb_image = pygame.transform.scale(voltorb_image, (50, 50))
+# stop_button = pygame.transform.scale(stop_sign, (50, 50))
+
 
 
 class GUI:
@@ -85,11 +88,22 @@ class GUI:
     def draw(self) -> bool:
         background_image = transform.scale(background_img, (self.screen.get_width(), self.screen.get_height()))
         self.screen.blit(background_image, [0, 0])
+        smallfont = pygame.font.SysFont('Corbel', 35)
+        color = (255, 255, 0)
+        color_dark = (100, 100, 100)
+        text = smallfont.render('STOP' , True , color)
+
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit(0)
                 return False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if 0 <= pygame.mouse.get_pos()[0] <= 68 and 0 <= pygame.mouse.get_pos()[1] <= 25:
+                    pygame.quit()
+        pygame.draw.rect(self.screen, color_dark, [0, 0, 68, 25])
+        self.screen.blit(text, (0, 0))
         self.drawEdges()
         self.drawNode()
         self.drawPokemons()
