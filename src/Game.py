@@ -14,7 +14,6 @@ class Game:
         self.graph = DiGraph()
         self.alg = GraphAlgo(self.graph)
         self.client = Client()
-        self.shortest = []
 
     def dist_node_to_node(self, node1: MyNode, node2: MyNode):
         dis = math.sqrt(pow(node1.location[0] - node2.location[0],
@@ -26,7 +25,7 @@ class Game:
             pow(node1.location[0] - pok.pos[0], 2) + pow(node1.location[1] - pok.pos[1], 2))
         return dis
 
-    def pokemon_src_dest(self, pok: Pokemons) -> None:
+    def find_src_dest_pok(self, pok: Pokemons) -> None:
         for node1 in self.graph.nodes:
             for node2 in self.graph.nodes:
                 dis1 = self.dist_node_to_node(
@@ -53,7 +52,7 @@ class Game:
             pokemons_obj = json.loads(pokemons)
             for p in pokemons_obj['Pokemons']:
                 pok = Pokemons(p['Pokemon'])
-                self.pokemon_src_dest(pok)
+                self.find_src_dest_pok(pok)
                 self.pokemons_list.append(pok)
 
     def update(self, agents=None, pokemons=None, graph=None):
@@ -71,7 +70,7 @@ class Game:
             pokemons_obj = json.loads(pokemons)
             for poke in pokemons_obj['Pokemons']:
                 p = Pokemons(poke['Pokemon'])
-                self.pokemon_src_dest(p)
+                self.find_src_dest_pok(p)
                 self.pokemons_list.append(p)
 
         if graph != None:
@@ -89,40 +88,21 @@ class Game:
                 self.graph.add_edge(int(edge["src"]), int(
                     edge["dest"]), float(edge["w"]))
         self.alg.__init__(self.graph)
-
+    # Given a position find the src node
     def find_node(self, pos: tuple = None):
         node_list = self.graph.nodes.values()
         for n in node_list:
             if n.location[0] == pos[0] and n.location[1] == pos[1]:
                 return n
 
+    # Given a position on the edge find the src node
     def find_node_by_edge(self, pok: Pokemons):
-        self.pokemon_src_dest(pok)
+        self.find_src_dest_pok(pok)
         node_list = self.graph.nodes.values()
         for n in node_list:
             if n.id == pok.src:
                 return n
 
-    def list_to_go(self):
-        dis = math.inf
-        res = []
-        for age in self.agents.values():
-            a_node = self.find_node(age.pos)
-            for pok in self.pokemons_list:
-                self.pokemon_src_dest(pok)
-                p_node = self.find_node_by_edge(pok)
-                if self.alg.shortest_path(a_node.id, p_node.id)[0] < dis:
-                    dis = self.alg.shortest_path(a_node.id, p_node.id)[0]
-                    res = self.alg.shortest_path(a_node.id, p_node.id)[1]
-
-        self.shortest = res
-
-    def dist_time_pok_agent(self, a: Agent, p: Pokemons):
-        if a.src == p.src:
-            return (0,(0,[]))
-        sp = self.alg.shortest_path(a.src, p.src)
-        time = (sp[0] / a.speed)
-        return (time, sp)
 
     def allocate_agents(self):
         pok = []
@@ -168,11 +148,16 @@ class Game:
                             i, id_path[i][0]))
 
 
-
-
     def addAgents(self):
         size = int(json.loads(self.client.get_info())["GameServer"]["agents"])
+        # nodes = []
+        # for p in self.pokemons_list:
+        #     p_node = self.find_node_by_edge(p)
+        #     nodes.append(p_node)
         for i in range(size):
+            # i_node = nodes[0]
+            # if len(nodes) > 1:
+            #     nodes.remove(0)
             self.client.add_agent("{\"id\":" + str(i) + "}")
 
 
