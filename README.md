@@ -16,5 +16,7 @@ The information of the game is represented as a JSON file.
 
 The implementetion of the game is made out of two parts:
 * Building the graph's data structurs and algorithms.
-* Use the graph data structure and algorithms to implement the "POKEMON GO!" game.
+* Use the graph data structure and algorithms to implement the "POKEMON" game.
+
+You can find all the information about the classes and algorithms in here https://github.com/adiel1892/Ex3_Directed_Graph_Algo
 
