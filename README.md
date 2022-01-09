@@ -44,6 +44,9 @@ In this class we creating the gui for the game.
 * drawAgents
 * draw - draw everything.
 
+![gui_pic](https://user-images.githubusercontent.com/84914845/148672605-b737c994-6e7d-4ced-b0e6-5d69c3231462.png)
+
+
 ### Ex4
 In this class we are running the project by connecting the server to the port, game and gui. 
 
