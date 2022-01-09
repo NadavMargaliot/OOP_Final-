@@ -21,7 +21,23 @@ The implementetion of the game is made out of two parts:
 You can find all the information about the classes and algorithms of the directed weighted graph in here https://github.com/adiel1892/Ex3_Directed_Graph_Algo
 
 ## Classes 
-### game
+### Client
+* start_connection - connecting the socket to the ip and the port.
+* send_messege - sends a message to the server.
+* get_agents
+* add_agent - add an agent to the game.
+* get_graph
+* get_info
+* get_pokemons
+* is_running - return true if the game is still going on.
+* time_to_end
+* start
+* stop
+* move - moving the agent.
+* choose_next_edge - choosing the next edge for the agent.
+* log_in
+* stop_connection
+### Game
 In this class we allocate the agent to the pokemon and basiclly controling the game.
 * dist_node_to_node - find distance between two nodes.
 * dist_pok_to_node - find distance between pokemon to node.
