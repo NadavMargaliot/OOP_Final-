@@ -117,11 +117,9 @@ class Game:
                 if p not in pok:
                     distance = self.time_and_shortest(i, p)
                     temp.append((p, distance))
-                # (pokemon, (TT, (distance, [path])))
             temp.sort(key=lambda x: x[1][0])
             pok.append(temp)
             final_list.append((i.id, temp[0]))
-            # ( agent.id, (pokemon, (TT, (distance, [path]))))     # ( agent.id, (pokemon, (TT, (distance, [path]))))
         final_list.sort(key=lambda x: x[1][1][0])
         final_path = {}
         for i in self.agents.keys():
@@ -136,7 +134,6 @@ class Game:
         distance = self.alg.shortest_path(agent.src, pokemon.src)
         travel_time = (distance[0] / agent.speed)
         return travel_time, distance
-        # ( TT, (distance, [path]))
 
     def CMD(self):
         id_path = self.allocate_agents()
@@ -148,9 +145,6 @@ class Game:
                 else:
                         self.client.choose_next_edge(
                             '{"agent_id":%s, "next_node_id":%s}' % (i, id_path[i][0]))
-
-
-
 
     def addAgents(self):
         size = int(json.loads(self.client.get_info())["GameServer"]["agents"])
