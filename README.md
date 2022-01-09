@@ -22,6 +22,7 @@ You can find all the information about the classes and algorithms of the directe
 
 ## Classes 
 ### Client
+This class represent the server and all the rules of the game.
 * start_connection - connecting the socket to the ip and the port.
 * send_messege - sends a message to the server.
 * get_agents
