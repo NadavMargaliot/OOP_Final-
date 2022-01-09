@@ -82,7 +82,7 @@ You can find our results in here https://github.com/adiel1892/OOP_Final/wiki
 
 
 
-
+a video of catching pokemons for example.
 
 https://user-images.githubusercontent.com/84914845/148673844-07592bb9-62b7-47e2-bc02-f0822e37f9c3.mov
 
