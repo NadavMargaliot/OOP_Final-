@@ -21,7 +21,24 @@ The implementetion of the game is made out of two parts:
 You can find all the information about the classes and algorithms of the directed weighted graph in here https://github.com/adiel1892/Ex3_Directed_Graph_Algo
 
 ## Classes 
-### game
+### Client
+This class represent the server and all the rules of the game.
+* start_connection - connecting the socket to the ip and the port.
+* send_messege - sends a message to the server.
+* get_agents
+* add_agent - add an agent to the game.
+* get_graph
+* get_info
+* get_pokemons
+* is_running - return true if the game is still going on.
+* time_to_end
+* start
+* stop
+* move - moving the agent.
+* choose_next_edge - choosing the next edge for the agent.
+* log_in
+* stop_connection
+### Game
 In this class we allocate the agent to the pokemon and basiclly controling the game.
 * dist_node_to_node - find distance between two nodes.
 * dist_pok_to_node - find distance between pokemon to node.
@@ -44,6 +61,9 @@ In this class we creating the gui for the game.
 * drawAgents
 * draw - draw everything.
 
+![gui_pic](https://user-images.githubusercontent.com/84914845/148672605-b737c994-6e7d-4ced-b0e6-5d69c3231462.png)
+
+
 ### Ex4
 In this class we are running the project by connecting the server to the port, game and gui. 
 
@@ -54,4 +74,15 @@ A travel time is declared by the agent speed devided by the distance between the
 So, we finding the best pair and sending the agent to the pokemon.
 
 
+
+![uml_Ex4](https://user-images.githubusercontent.com/84914845/148672823-32595144-cf1c-4c61-bb0e-cfcc69071139.jpg)
+
+
+You can find our results in here https://github.com/adiel1892/OOP_Final/wiki
+
+
+
+a video of catching pokemons for example.
+
+https://user-images.githubusercontent.com/84914845/148673844-07592bb9-62b7-47e2-bc02-f0822e37f9c3.mov
 
