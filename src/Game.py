@@ -1,3 +1,4 @@
+import random
 import time
 import pygame
 from client import Client
@@ -5,8 +6,11 @@ from src.MyNode import MyNode
 from src.Pokemons import Pokemons
 from src.Agent import Agent
 from src.GraphAlgo import *
+
 eps = 0.0000000001
 import math
+
+
 class Game:
     def __init__(self):
         self.pokemons_list = []
@@ -88,6 +92,7 @@ class Game:
                 self.graph.add_edge(int(edge["src"]), int(
                     edge["dest"]), float(edge["w"]))
         self.alg.__init__(self.graph)
+
     # Given a position find the src node
     def find_node(self, pos: tuple = None):
         node_list = self.graph.nodes.values()
@@ -102,7 +107,6 @@ class Game:
         for n in node_list:
             if n.id == pok.src:
                 return n
-
 
     def allocate_agents(self):
         pok = []
@@ -126,11 +130,10 @@ class Game:
                     final_path[i] = element[1][1][1][1]
         return final_path
 
-
     def time_and_shortest(self, agent: Agent, pokemon: Pokemons):
         if agent.src == pokemon.src:
-            return 0,(0,[pokemon.dest])
-        distance = self.alg.shortest_path(agent.src,pokemon.src)
+            return 0, (0, [pokemon.dest])
+        distance = self.alg.shortest_path(agent.src, pokemon.src)
         travel_time = (distance[0] / agent.speed)
         return travel_time, distance
         # ( TT, (distance, [path]))
@@ -143,30 +146,13 @@ class Game:
                     self.client.choose_next_edge(
                         '{"agent_id":%s, "next_node_id":%s}' % (i, id_path[i][1]))
                 else:
-                    self.client.choose_next_edge(
-                        '{"agent_id":%s, "next_node_id":%s}' % (
-                            i, id_path[i][0]))
+                        self.client.choose_next_edge(
+                            '{"agent_id":%s, "next_node_id":%s}' % (i, id_path[i][0]))
+
+
 
 
     def addAgents(self):
         size = int(json.loads(self.client.get_info())["GameServer"]["agents"])
-        # nodes = []
-        # for p in self.pokemons_list:
-        #     p_node = self.find_node_by_edge(p)
-        #     nodes.append(p_node)
         for i in range(size):
-            # i_node = nodes[0]
-            # if len(nodes) > 1:
-            #     nodes.remove(0)
             self.client.add_agent("{\"id\":" + str(i) + "}")
-
-
-
-
-
-
-
-
-
-
-

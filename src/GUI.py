@@ -7,15 +7,15 @@ from Game import *
 WIDTH, HEIGHT = 1080, 720
 radius = 15
 background = "/Users/adielbenmeir/Desktop/pics_Ex4/bt_3.jpeg"
-pokeball = "/Users/adielbenmeir/Desktop/pics_Ex4/pokeball2.png"
+agent = "/Users/adielbenmeir/Desktop/pics_Ex4/A.png"
 bulbasaur = "/Users/adielbenmeir/Desktop/pics_Ex4/bulbasaur.png"
 voltorb = "/Users/adielbenmeir/Desktop/pics_Ex4/voltorb.webp"
 
 pygame.init()
 pygame.font.init()
 FONT = pygame.font.SysFont('Arial', 20, bold=True)
-pokeball_image = image.load(pokeball)
-pokeball_image = pygame.transform.scale(pokeball_image, (50, 50))
+agent_image = image.load(agent)
+agent_image = pygame.transform.scale(agent_image, (50, 50))
 bulbasaur_image = image.load(bulbasaur)
 bulbasaur_image = pygame.transform.scale(bulbasaur_image, (50, 50))
 background_img = image.load(background)
@@ -83,7 +83,7 @@ class GUI:
             x = self.my_scale(agent.pos[0], x=True) - radius / 2
             y = self.my_scale(agent.pos[1], y=True) - radius / 2
 
-            self.screen.blit(pokeball_image, (x, y))
+            self.screen.blit(agent_image, (x, y))
 
     def draw(self) -> bool:
         background_image = transform.scale(background_img, (self.screen.get_width(), self.screen.get_height()))
