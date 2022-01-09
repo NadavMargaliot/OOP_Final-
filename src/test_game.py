@@ -13,13 +13,13 @@ HOST = '127.0.0.1'
 # initializing the Client
 client = Client()
 client.start_connection(HOST, PORT)
-client.add_agent("{\"id\":0}")
-client.add_agent("{\"id\":1}")
-client.add_agent("{\"id\":2}")
-client.add_agent("{\"id\":3}")
-client.start()
-# initializing the game
 game = Game()
+client.add_agent("{\"id\":0}")
+# client.add_agent("{\"id\":1}")
+# client.add_agent("{\"id\":2}")
+# client.add_agent("{\"id\":3}")
+client.start()
+
 
 
 
@@ -35,13 +35,10 @@ class MyTestCase(unittest.TestCase):
         game.update( client.get_agents(), client.get_pokemons(), client.get_graph())
         self.assertEqual(game.pokemons_list[0].src, None)
         self.assertEqual(game.pokemons_list[0].dest, None)
-        game.update(client.get_pokemons(), client.get_agents())
-        self.assertEqual(game.pokemons_list[0].src, 9)
-        self.assertEqual(game.pokemons_list[0].dest, 8)
+        game.find_src_dest_pok(game.pokemons_list[0])
+        self.assertEqual(game.pokemons_list[0].src, 8)
+        self.assertEqual(game.pokemons_list[0].dest, 9)
 
-
-
-#
 
 
 
